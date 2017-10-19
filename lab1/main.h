@@ -7,12 +7,10 @@
 #include <string>
 #include <map>
 #include <algorithm> 
+#include <sstream>
 #include <functional>
-using namespace std;
-vector<string> get_words(string filename);
-vector<string> get_phrases(vector<string> words, int n);
-vector<pair<string, int>> get_sphr(vector<string> phrases);
-bool mySort(pair<string, int>a, pair<string, int>b) {
-	return a.second >  b.second;
-}
+std::vector<std::string> get_words(const std::string &phrase);
+std::vector<std::string> get_phrases(const std::vector<std::string> &words, int n);
+std::vector<std::pair<std::string, int>> get_sphr(const std::vector<std::string> &phrases);
+bool mySort(std::pair<std::string, int>a, std::pair<std::string, int>b);
 

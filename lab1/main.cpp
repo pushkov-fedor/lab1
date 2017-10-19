@@ -1,5 +1,5 @@
 #include "main.h"
-
+using namespace std;
 int main(int argc, char* argv[]) {
 	//get_words() возвращает вектор слов
 	//get_phrases(vector<string> words) возвращает вектор фраз
@@ -45,8 +45,18 @@ int main(int argc, char* argv[]) {
 				cin.get();
 				return -1;
 			}
-		} else 
-		if (str.find(".txt") != string::npos) {
+		}
+		else		
+		if (str.find(".") != string::npos) {
+			int counter = 0;
+			for (int i = 0; i < str.size(); i++) {
+				if (str[i] == '.')counter++;
+			}
+			if (counter > 1) {
+				cout << "Wrong filename" << endl;
+				cin.get();
+				return -1;
+			}
 			filename = str;
 		}
 		else {
@@ -71,7 +81,32 @@ int main(int argc, char* argv[]) {
 	}*/
 
 
-	vector<string> words = get_words(filename);
+	string phrase;
+
+	if (filename != "") {
+		ifstream file(filename);
+		if (file.is_open()==0) {
+			cout << "Can't open this file: " << filename << endl;
+			cin.get();
+			return -1;
+		}
+		string str;
+		while (getline(file, str)) {
+			phrase = phrase + " " + str;
+		}
+		//cout << phrase << endl;
+	}
+	else {
+		cout << "Enter your phrase:" << endl;
+		string str;
+		do {
+			getline(cin, str);
+			phrase = phrase + " " + str;
+		} while (cin.get() != '\n');
+	}
+
+
+	vector<string> words = get_words(phrase);
 	vector<string> phrases = get_phrases(words, n);
 	vector<pair<string, int>> sort_phrases = get_sphr(phrases);
 	for (int i = 0; i < sort_phrases.size(); i++) {
@@ -84,68 +119,3 @@ int main(int argc, char* argv[]) {
 
 
 
-
-
-vector<string> get_words(string filename) {
-	string phrase;
-
-	if (filename != "") {
-		ifstream file(filename);
-		string str;
-		while (getline(file, str)) {
-			phrase = phrase + " " + str;
-		}
-		//cout << phrase << endl;
-	}
-	else {
-		cout << "Enter your phrase:" << endl;
-		getline(cin, phrase);
-	}
-
-	char* c_phrase = (char*)malloc(sizeof(char)*phrase.size());
-	for (int i = 0; i < phrase.size(); i++) {
-		c_phrase[i] = phrase[i];
-	}
-	c_phrase[phrase.size()] = '\0';
-	std::vector<string> words;
-	int i = 0;
-	string word;
-	const char separator[] = " ";
-	char *ptr = NULL;
-	ptr = strtok(c_phrase, separator);
-	while (ptr) {
-		words.push_back(ptr);
-		ptr = strtok(0, separator);
-	}
-
-	return words;
-}
-
-vector<string> get_phrases(vector<string> words, int n) {
-	vector<string> phrases;
-	for (int i = 0; i < words.size() - (n-1); i++) {
-		string phrase;
-		for (int j = 0; j < n; j++)
-			phrase = phrase + words[i + j] + " ";
-		phrases.push_back(phrase);
-	}
-	return phrases;
-
-}
-
-vector<pair<string, int>> get_sphr(vector<string> phrases) {
-	map<string, int> phrases_map;
-	for (int i = 0; i < phrases.size(); i++) {
-		auto f_map = phrases_map.find(phrases[i]);
-		if (f_map != phrases_map.end()) {
-			f_map->second++;
-		}
-		phrases_map.insert(pair<string, int>(phrases[i], 1));
-	}
-	vector<pair<string, int>> fr_phrases;
-	for (auto itr = phrases_map.begin(); itr != phrases_map.end(); itr++) {
-		fr_phrases.push_back(*itr);
-	}
-	sort(fr_phrases.begin(), fr_phrases.end(), mySort);
-	return fr_phrases;
-}
